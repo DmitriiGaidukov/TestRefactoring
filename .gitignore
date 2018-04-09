@@ -3,3 +3,13 @@
 ################################################################################
 
 *.dll
+*.pdb
+/TestRefactoring/TestRefactoring/obj/Release/netstandard1.3/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+/TestRefactoring/TestRefactoring/obj/Release/netstandard1.3/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
+/TestRefactoring/TestRefactoring/obj/Release/netstandard1.3/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+/TestRefactoring/TestRefactoring/bin/Release/netstandard1.3/TestRefactoring.deps.json
+/TestRefactoring/TestRefactoring/bin/Debug/netstandard1.3/TestRefactoring.deps.json
+/TestRefactoring/TestRefactoring/obj
+/TestRefactoring/TestRefactoring.Vsix/obj
+/TestRefactoring/TestRefactoring.Vsix/bin
+/.vs/TestRefactoring/v15
