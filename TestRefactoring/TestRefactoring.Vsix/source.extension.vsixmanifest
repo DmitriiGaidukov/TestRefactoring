@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="TestRefactoring..83796cce-a529-490a-bee2-2e9b4f93df9d" Version="1.0" Language="en-US" Publisher="DGaidukov"/>
         <DisplayName>TestRefactoring</DisplayName>
-        <Description xml:space="preserve">As for now, this extention is intended for use solutions of KSK Group.
+        <Description xml:space="preserve">As for now, this extention is intended for use in solutions of KSK Group.
 Helps in development of unit tests and integration unit tests. 
 This is a code refactoring extension for the .NET Compiler Platform ("Roslyn").</Description>
         <PreviewImage>Icons8-Windows-8-Astrology-Year-Of-Rooster.ico</PreviewImage>
