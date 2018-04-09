@@ -43,7 +43,7 @@ namespace TestRefactoring
                 .SingleOrDefault(p => p.Name.EndsWith(".Integration.NUnit"));
 
             var unitTestProject = sameFolderProjects
-                .SingleOrDefault(p => !p.Name.EndsWith(".Integration.NUnit")
+                .SingleOrDefault(p => !p.Name.EndsWith(".Integration.NUnit") 
                     && p.Name.EndsWith(".NUnit"));
 
 
