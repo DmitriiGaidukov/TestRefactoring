@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <ApplicationIcon>Icons8-Windows-8-Astrology-Year-Of-Rooster.ico</ApplicationIcon>
+    <ApplicationIcon></ApplicationIcon>
   </PropertyGroup>
   
   <ItemGroup>
