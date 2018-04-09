@@ -6,7 +6,8 @@
         <Description xml:space="preserve">As for now, this extention is intended for use in solutions of KSK Group.
 Helps in development of unit tests and integration unit tests. 
 This is a code refactoring extension for the .NET Compiler Platform ("Roslyn").</Description>
-        <PreviewImage>Icons8-Windows-8-Astrology-Year-Of-Rooster.ico</PreviewImage>
+        <Icon>Resources\Rooster.ico</Icon>
+        <PreviewImage>Resources\Rooster.ico</PreviewImage>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,)" />
