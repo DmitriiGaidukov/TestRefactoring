@@ -20,8 +20,6 @@ namespace TestRefactoring
 
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating a CodeAction for each refactoring to offer
-
             // syntax 
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
