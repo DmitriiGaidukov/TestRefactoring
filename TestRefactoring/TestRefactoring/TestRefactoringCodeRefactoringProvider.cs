@@ -19,10 +19,10 @@ namespace TestRefactoring
         private readonly CodeGenerator _codeGenerator = new CodeGenerator();
 
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
-        {
+        {       
             // syntax 
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
+            
             // Find the node at the selection.
             var node = root.FindNode(context.Span);
 
@@ -50,10 +50,13 @@ namespace TestRefactoring
             // if integration tests project exists, then add the corresponding refactoring option
             if (integrationTestProject != null)
             {
+                // semantic
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
                 // For any type declaration node, create a code action to reverse the identifier text.
                 var action = CodeAction.Create(
                     $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project", 
-                    c => CreateTestFixtureAsync(context.Document, typeDecl, c, integrationTestProject, CodeGenerator.GetIntegrationTestCode));
+                    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, integrationTestProject, CodeGenerator.GetIntegrationTestCode));
 
                 // Register this code action.
                 context.RegisterRefactoring(action);
@@ -62,13 +65,18 @@ namespace TestRefactoring
             // if unit tests project exists, then add the corresponding refactoring option
             if (unitTestProject != null)
             {
+                // semantic
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
                 // For any type declaration node, create a code action to reverse the identifier text.
                 var action = CodeAction.Create(
                     $"Create {typeDecl.Identifier.Text}Tests.cs unit test for this class in the {unitTestProject.Name} project",
-                    c => CreateTestFixtureAsync(context.Document, typeDecl, c, unitTestProject, CodeGenerator.GetUnitTestCode));
+                    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, unitTestProject, CodeGenerator.GetUnitTestCode));
+
+                //CodeActionWithOptions.Create()
 
                 // Register this code action.
-                context.RegisterRefactoring(action);
+                context.RegisterRefactoring(action);    
             }
             
         }
@@ -84,10 +92,9 @@ namespace TestRefactoring
         }
 
 
-        private async Task<Solution> CreateTestFixtureAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken, Project testProject, Func<string, string, string, string, string> codeGenerationFunction)
+        public static async Task<Solution> CreateTestFixtureAsync(Document document, TypeDeclarationSyntax typeDecl, SemanticModel semanticModel, CancellationToken cancellationToken, Project testProject, Func<string, string, string, string, string> codeGenerationFunction)
         {
-            // Get the symbol representing the type to be renamed.
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+            // Get the symbol representing the type for which a test is being created
             var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
 
             
@@ -107,10 +114,18 @@ namespace TestRefactoring
             var fileFolders = typeNamespace.Replace($"{document.Project.Name}.", "").Split('.');
 
             // add textfixture declaration file to the integration test project
-            testProject = testProject.AddDocument(fileName, code, folders: fileFolders).Project;
+            var testFixtureDocument = testProject.AddDocument(fileName, code, folders: fileFolders);
 
+            var newTestProject = testFixtureDocument.Project;
+            
             // obtain the new solution
-            var newSolution = testProject.Solution;
+            var newSolution = newTestProject.Solution;
+
+
+            //newSolution.Workspace.OpenDocument(testFixtureDocument.Id);
+
+            //var op = new OpenDocumentOperation(testFixtureDocument.Id, true);
+            //op.Apply(newSolution.Workspace, cancellationToken);
 
 
             // Return the new solution with the testfixture file
