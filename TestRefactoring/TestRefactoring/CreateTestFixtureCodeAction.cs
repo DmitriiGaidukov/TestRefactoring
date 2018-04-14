@@ -9,7 +9,10 @@ using TestRefactoring.Extensions;
 
 namespace TestRefactoring
 {
-    public class TestActionOperation : CodeActionWithOptions
+    /// <summary>
+    /// CodeAction for creating TestFixture for specified class
+    /// </summary>
+    public class CreateTestFixtureCodeAction : CodeActionWithOptions
     {
         private readonly Project _testProject;
         private readonly Document _document;
@@ -19,7 +22,7 @@ namespace TestRefactoring
         public override string Title { get; }
 
 
-        public TestActionOperation(Project testProject, Document document, TypeDeclarationSyntax typeDecl, SemanticModel semanticModel, string title, Func<string, string, string, string, string> codeGenerationFunction)
+        public CreateTestFixtureCodeAction(Project testProject, Document document, TypeDeclarationSyntax typeDecl, SemanticModel semanticModel, string title, Func<string, string, string, string, string> codeGenerationFunction)
         {
             _testProject = testProject;
             _document = document;
@@ -32,13 +35,10 @@ namespace TestRefactoring
         public override object GetOptions(CancellationToken cancellationToken)
         {
             return new Object();
-
-            throw new NotImplementedException();
         }
 
         protected override Task<IEnumerable<CodeActionOperation>> ComputeOperationsAsync(object options, CancellationToken cancellationToken)
         {
-            // todo: perfom main work here. then return action for the opening of document
             // Get the symbol representing the type for which a test is being created
             var typeSymbol = _semanticModel.GetDeclaredSymbol(_typeDecl, cancellationToken);
 
@@ -59,23 +59,20 @@ namespace TestRefactoring
             var fileFolders = typeNamespace.Replace($"{_document.Project.Name}.", "").Split('.');
 
             // add textfixture declaration file to the integration test project
-            var testFixtureDocument = _testProject.AddDocument(fileName, code, folders: fileFolders);
+            var addedDocument = _testProject.AddDocument(fileName, code, folders: fileFolders);
 
-            var newTestProject = testFixtureDocument.Project;
+            var newTestProject = addedDocument.Project;
 
             // obtain the new solution
             var newSolution = newTestProject.Solution;
 
-            var openDocumentAction = new OpenDocumentOperation(testFixtureDocument.Id, true);
-
             IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
             {
                 new ApplyChangesOperation(newSolution),
-                openDocumentAction
+                new OpenDocumentOperation(addedDocument.Id, true)
             };
 
             return Task.FromResult(operations);
-            //throw new NotImplementedException();
         }
     }
 }

@@ -53,36 +53,36 @@ namespace TestRefactoring
                 // semantic
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-                // For any type declaration node, create a code action to reverse the identifier text.
-                //var action = CodeAction.Create(
-                //    $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project", 
-                //    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, integrationTestProject, CodeGenerator.GetIntegrationTestCode));
-
-                var title = $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project";
-
-                var actionWithOptions = new TestActionOperation(integrationTestProject, context.Document, typeDecl, semanticModel, title, CodeGenerator.GetIntegrationTestCode);
+                var createTestFixtureCodeAction = new CreateTestFixtureCodeAction(
+                    integrationTestProject, 
+                    context.Document, 
+                    typeDecl, 
+                    semanticModel,
+                    $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project", 
+                    CodeGenerator.GetIntegrationTestCode);
 
                 // Register this code action.
-                context.RegisterRefactoring(actionWithOptions);
+                context.RegisterRefactoring(createTestFixtureCodeAction);
             }
 
-            //// if unit tests project exists, then add the corresponding refactoring option
-            //if (unitTestProject != null)
-            //{
-            //    // semantic
-            //    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            // if unit tests project exists, then add the corresponding refactoring option
+            if (unitTestProject != null)
+            {
+                // semantic
+                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            //    // For any type declaration node, create a code action to reverse the identifier text.
-            //    var action = CodeAction.Create(
-            //        $"Create {typeDecl.Identifier.Text}Tests.cs unit test for this class in the {unitTestProject.Name} project",
-            //        c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, unitTestProject, CodeGenerator.GetUnitTestCode));
+                var createTestFixtureCodeAction = new CreateTestFixtureCodeAction(
+                    unitTestProject,
+                    context.Document,
+                    typeDecl,
+                    semanticModel,
+                    $"Create {typeDecl.Identifier.Text}Tests.cs unit test for this class in the {unitTestProject.Name} project",
+                    CodeGenerator.GetUnitTestCode);
 
-            //    //CodeActionWithOptions.Create()
+                // Register this code action.
+                context.RegisterRefactoring(createTestFixtureCodeAction);
+            }
 
-            //    // Register this code action.
-            //    context.RegisterRefactoring(action);    
-            //}
-            
         }
 
         /// <summary>
@@ -93,47 +93,6 @@ namespace TestRefactoring
         private string GetProjectFolderRootPath(string csprojPath)
         {
             return new DirectoryInfo(csprojPath).Parent?.Parent?.FullName;
-        }
-
-
-        public static async Task<Solution> CreateTestFixtureAsync(Document document, TypeDeclarationSyntax typeDecl, SemanticModel semanticModel, CancellationToken cancellationToken, Project testProject, Func<string, string, string, string, string> codeGenerationFunction)
-        {
-            // Get the symbol representing the type for which a test is being created
-            var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
-
-            
-            // get the name and namepsace of current type 
-            var typeName = typeDecl.Identifier.Text;
-            var typeNamespace = typeSymbol.GetContainingNamespace();
-
-            // define name and namepsace for testfixture type
-            var testTypeName = typeName + "Tests";
-            var testTypeNamespace = testProject.Name + "." + typeNamespace.Replace($"{document.Project.Name}.", "");
-                
-            // generate code with testfixture type declaration
-            var code = codeGenerationFunction(typeName, typeNamespace, testTypeName, testTypeNamespace);
-
-            // define filename and folders for testfixture file
-            var fileName = $"{typeName}Tests.cs";
-            var fileFolders = typeNamespace.Replace($"{document.Project.Name}.", "").Split('.');
-
-            // add textfixture declaration file to the integration test project
-            var testFixtureDocument = testProject.AddDocument(fileName, code, folders: fileFolders);
-
-            var newTestProject = testFixtureDocument.Project;
-            
-            // obtain the new solution
-            var newSolution = newTestProject.Solution;
-
-
-            //newSolution.Workspace.OpenDocument(testFixtureDocument.Id);
-
-            var op = new OpenDocumentOperation(testFixtureDocument.Id, true);
-            //op.Apply(newSolution.Workspace, cancellationToken);
-
-
-            // Return the new solution with the testfixture file
-            return newSolution;
         }
     }
 }
