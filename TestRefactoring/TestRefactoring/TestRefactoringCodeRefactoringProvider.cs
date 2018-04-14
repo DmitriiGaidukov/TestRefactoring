@@ -54,30 +54,34 @@ namespace TestRefactoring
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
                 // For any type declaration node, create a code action to reverse the identifier text.
-                var action = CodeAction.Create(
-                    $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project", 
-                    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, integrationTestProject, CodeGenerator.GetIntegrationTestCode));
+                //var action = CodeAction.Create(
+                //    $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project", 
+                //    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, integrationTestProject, CodeGenerator.GetIntegrationTestCode));
+
+                var title = $"Create {typeDecl.Identifier.Text}Tests.cs integration test for this class in the {integrationTestProject.Name} project";
+
+                var actionWithOptions = new TestActionOperation(integrationTestProject, context.Document, typeDecl, semanticModel, title, CodeGenerator.GetIntegrationTestCode);
 
                 // Register this code action.
-                context.RegisterRefactoring(action);
+                context.RegisterRefactoring(actionWithOptions);
             }
 
-            // if unit tests project exists, then add the corresponding refactoring option
-            if (unitTestProject != null)
-            {
-                // semantic
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            //// if unit tests project exists, then add the corresponding refactoring option
+            //if (unitTestProject != null)
+            //{
+            //    // semantic
+            //    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-                // For any type declaration node, create a code action to reverse the identifier text.
-                var action = CodeAction.Create(
-                    $"Create {typeDecl.Identifier.Text}Tests.cs unit test for this class in the {unitTestProject.Name} project",
-                    c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, unitTestProject, CodeGenerator.GetUnitTestCode));
+            //    // For any type declaration node, create a code action to reverse the identifier text.
+            //    var action = CodeAction.Create(
+            //        $"Create {typeDecl.Identifier.Text}Tests.cs unit test for this class in the {unitTestProject.Name} project",
+            //        c => CreateTestFixtureAsync(context.Document, typeDecl, semanticModel, c, unitTestProject, CodeGenerator.GetUnitTestCode));
 
-                //CodeActionWithOptions.Create()
+            //    //CodeActionWithOptions.Create()
 
-                // Register this code action.
-                context.RegisterRefactoring(action);    
-            }
+            //    // Register this code action.
+            //    context.RegisterRefactoring(action);    
+            //}
             
         }
 
@@ -124,7 +128,7 @@ namespace TestRefactoring
 
             //newSolution.Workspace.OpenDocument(testFixtureDocument.Id);
 
-            //var op = new OpenDocumentOperation(testFixtureDocument.Id, true);
+            var op = new OpenDocumentOperation(testFixtureDocument.Id, true);
             //op.Apply(newSolution.Workspace, cancellationToken);
 
 
