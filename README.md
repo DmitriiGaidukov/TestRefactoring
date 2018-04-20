@@ -7,3 +7,4 @@ This is a code refactoring extension for the .NET Compiler Platform ("Roslyn").
 
 todo list:
 - move dto into a separate file, located in accordance with  current location. 
+- autogeneration of missing properties for entities
