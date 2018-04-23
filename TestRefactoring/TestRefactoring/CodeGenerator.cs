@@ -25,12 +25,12 @@ namespace {testTypeNamespace}
         [Test]
         public void SomeTest()
         {{
-            // =========---------- arrangement
+            // --============================================= arrangement
 
-            // =========---------- action
+            // --============================================= action
             //{typeName}.
 
-            // =========---------- assertion
+            // --============================================= assertion
         }}
     }}
 
@@ -62,13 +62,13 @@ namespace {testTypeNamespace}
         [Test]
         public void SomeTest()
         {{
-            // =========---------- arrangement
+            // --============================================= arrangement
             //Container.SetTable();
 
-            // =========---------- action
+            // --============================================= action
             //{typeName}.
 
-            // =========---------- assertion
+            // --============================================= assertion
         }}
     }}
 
