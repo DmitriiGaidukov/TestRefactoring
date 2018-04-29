@@ -37,7 +37,7 @@ namespace TestRefactoring
 
             // try to find Integration.NUnit project in the same folder 
             var sameFolderProjects = solution.Projects
-                .Where(p => GetProjectFolderRootPath(currProject.FilePath) == GetProjectFolderRootPath(p.FilePath)).ToArray();
+                .Where(p => GetProjectFoldersAreSiblings(currProject.FilePath, p.FilePath)).ToArray();
 
             var integrationTestProject = sameFolderProjects
                 .SingleOrDefault(p => p.Name.EndsWith(".Integration.NUnit"));
@@ -86,13 +86,22 @@ namespace TestRefactoring
         }
 
         /// <summary>
-        /// gets the path to the folder containing the specified project's folder
+        /// checks wether the projects' folders are in the same folder
         /// </summary>
         /// <param name="csprojPath"></param>
         /// <returns></returns>
-        private string GetProjectFolderRootPath(string csprojPath)
+        private bool GetProjectFoldersAreSiblings(string csprojPath1, string csprojPath2)
         {
-            return new DirectoryInfo(csprojPath).Parent?.Parent?.FullName;
+            if (csprojPath1 == null || csprojPath2 == null)
+                return false;
+
+            var proj1Directory = new DirectoryInfo(csprojPath1).Parent?.Parent?.FullName;
+            var proj2Directory = new DirectoryInfo(csprojPath2).Parent?.Parent?.FullName;
+
+            if (proj1Directory == null || proj2Directory == null)
+                return false;
+
+            return proj1Directory == proj2Directory;
         }
     }
 }
