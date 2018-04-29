@@ -46,12 +46,10 @@ namespace TestRefactoring
 
         protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
         {
-            //var documentOptions = await _document.GetOptionsAsync(cancellationToken).ConfigureAwait(false);
-
 
             IEnumerable<CodeActionOperation> operations = GetOperations(cancellationToken);
 
-            return await Task.FromResult(operations);
+            return await Task.FromResult(operations).ConfigureAwait(false);
         }
 
         private IEnumerable<CodeActionOperation> GetOperations(CancellationToken cancellationToken)
