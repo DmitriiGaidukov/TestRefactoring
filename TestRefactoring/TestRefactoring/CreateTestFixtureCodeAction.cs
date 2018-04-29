@@ -39,7 +39,15 @@ namespace TestRefactoring
 
         protected override Task<IEnumerable<CodeActionOperation>> ComputeOperationsAsync(object options, CancellationToken cancellationToken)
         {
-            IEnumerable<CodeActionOperation> operations = GetOperations(cancellationToken);
+            // add textfixture declaration file to the integration test project
+            var addedDocument = CreateTextFixtureDocument(cancellationToken);
+
+
+            IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
+            {
+                new ApplyChangesOperation(addedDocument.Project.Solution),
+                new OpenDocumentOperation(addedDocument.Id, true)
+            };
 
             return Task.FromResult(operations);
         }
@@ -47,12 +55,21 @@ namespace TestRefactoring
         protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
         {
 
-            IEnumerable<CodeActionOperation> operations = GetOperations(cancellationToken);
+            // add textfixture declaration file to the integration test project
+            var addedDocument = CreateTextFixtureDocument(cancellationToken);
+
+
+            IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
+            {
+                new ApplyChangesOperation(addedDocument.Project.Solution),
+                //new OpenDocumentOperation(addedDocument.Id, true)
+            };
 
             return await Task.FromResult(operations).ConfigureAwait(false);
         }
 
-        private IEnumerable<CodeActionOperation> GetOperations(CancellationToken cancellationToken)
+  
+        private Document CreateTextFixtureDocument(CancellationToken cancellationToken)
         {
             // Get the symbol representing the type for which a test is being created
             var typeSymbol = _semanticModel.GetDeclaredSymbol(_typeDecl, cancellationToken);
@@ -76,17 +93,7 @@ namespace TestRefactoring
             // add textfixture declaration file to the integration test project
             var addedDocument = _testProject.AddDocument(fileName, code, folders: fileFolders);
 
-            var newTestProject = addedDocument.Project;
-
-            // obtain the new solution
-            var newSolution = newTestProject.Solution;
-
-            IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
-            {
-                new ApplyChangesOperation(newSolution),
-                new OpenDocumentOperation(addedDocument.Id, true)
-            };
-            return operations;
+            return addedDocument;
         }
     }
 }
