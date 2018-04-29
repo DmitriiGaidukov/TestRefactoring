@@ -39,6 +39,23 @@ namespace TestRefactoring
 
         protected override Task<IEnumerable<CodeActionOperation>> ComputeOperationsAsync(object options, CancellationToken cancellationToken)
         {
+            IEnumerable<CodeActionOperation> operations = GetOperations(cancellationToken);
+
+            return Task.FromResult(operations);
+        }
+
+        protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
+        {
+            //var documentOptions = await _document.GetOptionsAsync(cancellationToken).ConfigureAwait(false);
+
+
+            IEnumerable<CodeActionOperation> operations = GetOperations(cancellationToken);
+
+            return await Task.FromResult(operations);
+        }
+
+        private IEnumerable<CodeActionOperation> GetOperations(CancellationToken cancellationToken)
+        {
             // Get the symbol representing the type for which a test is being created
             var typeSymbol = _semanticModel.GetDeclaredSymbol(_typeDecl, cancellationToken);
 
@@ -71,8 +88,7 @@ namespace TestRefactoring
                 new ApplyChangesOperation(newSolution),
                 new OpenDocumentOperation(addedDocument.Id, true)
             };
-
-            return Task.FromResult(operations);
+            return operations;
         }
     }
 }
