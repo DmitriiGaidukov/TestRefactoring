@@ -39,9 +39,7 @@ namespace TestRefactoring
 
         protected override Task<IEnumerable<CodeActionOperation>> ComputeOperationsAsync(object options, CancellationToken cancellationToken)
         {
-            // add textfixture declaration file to the integration test project
             var addedDocument = CreateTextFixtureDocument(cancellationToken);
-
 
             IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
             {
@@ -54,15 +52,11 @@ namespace TestRefactoring
 
         protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
         {
-
-            // add textfixture declaration file to the integration test project
             var addedDocument = CreateTextFixtureDocument(cancellationToken);
-
 
             IEnumerable<CodeActionOperation> operations = new CodeActionOperation[]
             {
                 new ApplyChangesOperation(addedDocument.Project.Solution),
-                //new OpenDocumentOperation(addedDocument.Id, true)
             };
 
             return await Task.FromResult(operations).ConfigureAwait(false);
