@@ -4,10 +4,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <ApplicationIcon></ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="C:\Users\DGaidukov\Documents\CreateTestFixtureCodeAction.cs" Link="CreateTestFixtureCodeAction.cs" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.4.0" PrivateAssets="all" />
